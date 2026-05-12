@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- API Handlers ---
     async function callGeminiAPI(apiKey, modelId, systemPrompt, userPrompt) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
+        let url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
         const payload = {
             systemInstruction: { parts: [{ text: systemPrompt }] },
             contents: [{ role: "user", parts: [{ text: userPrompt }] }],
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
             generationConfig: { temperature: 0.7 }
         };
 
-        const response = await fetch(url, {
+        let response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -466,7 +466,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!response.ok) {
             const errData = await response.json();
-            throw new Error(errData.error?.message || 'Lỗi kết nối Gemini API');
+            const errMsg = errData.error?.message || '';
+            
+            if (errMsg.includes('is not found') || errMsg.includes('not supported')) {
+                console.log("Model not found, auto-fetching valid models...");
+                const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                if (modelsRes.ok) {
+                    const modelsData = await modelsRes.json();
+                    const validModels = modelsData.models.filter(m => m.supportedGenerationMethods?.includes('generateContent'));
+                    if (validModels.length > 0) {
+                        const fallbackModelId = validModels[0].name.replace('models/', '');
+                        localStorage.setItem('cw_gemini_model', fallbackModelId);
+                        console.log("Retrying with fallback model:", fallbackModelId);
+                        
+                        url = `https://generativelanguage.googleapis.com/v1beta/models/${fallbackModelId}:generateContent?key=${apiKey}`;
+                        response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!response.ok) {
+                            const err2 = await response.json();
+                            throw new Error(err2.error?.message || 'Lỗi API Gemini sau khi thử lại');
+                        }
+                    } else {
+                        throw new Error('API Key này không hỗ trợ model nào có thể viết bài!');
+                    }
+                } else {
+                    throw new Error(errMsg);
+                }
+            } else {
+                throw new Error(errMsg || 'Lỗi kết nối Gemini API');
+            }
         }
 
         const data = await response.json();
