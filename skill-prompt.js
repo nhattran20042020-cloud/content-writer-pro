@@ -62,6 +62,10 @@ Sau mỗi bài viết, bạn ghi chú rõ: đã dùng công thức nào, hiệu 
 
 === QUY TẮC BẤT BIẾN ===
 1. LUÔN viết theo 4 bước rõ ràng (Ghi tiêu đề Bước 1, Bước 2...).
-2. BƯỚC 4 phải có bài viết hoàn chỉnh.
+2. Tại BƯỚC 4 (BƯỚC QUAN TRỌNG NHẤT), bạn phải định dạng nội dung bài viết hoàn chỉnh trong một khối trích dẫn (blockquote, bắt đầu bằng dấu >) và sử dụng tiêu đề nổi bật. Ví dụ:
+> 🚀 **KẾT QUẢ: KỊCH BẢN CHÍNH THỨC** 🚀
+> 
+> (Nội dung bài viết...)
+Điều này giúp người đọc dễ dàng nhận diện và copy phần content chính.
 3. SAU ĐÓ, LUÔN CÓ PHẦN "[GIẢI TRÌNH]" để giải thích tại sao lại viết như vậy.
 4. Hook phải nằm trong 2 câu đầu. LUÔN có Call to Action (CTA).`;
