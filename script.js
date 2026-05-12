@@ -253,6 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (generateVisuals) {
             userPrompt += `- **ĐẶC BIỆT QUAN TRỌNG:** Vì đây là kịch bản đa phương tiện, ở BƯỚC 4, hãy kẻ một BẢNG PHÂN CẢNH gồm 3 cột: [Thời gian/Đoạn] | [Lời thoại/Nội dung Text] | [Visual Cues & Prompt Midjourney]. Cột Visual Cues phải mô tả chi tiết góc quay, âm thanh, hoặc cung cấp câu prompt tiếng Anh chuyên nghiệp cho AI sinh ảnh.\n`;
+        } else {
+            userPrompt += `- **ĐẶC BIỆT QUAN TRỌNG:** Ở BƯỚC 4, chỉ xuất ra một KỊCH BẢN SẠCH (Clean Text). Tuyệt đối KHÔNG kẻ bảng, KHÔNG chia cột Hình ảnh/Âm thanh (Visual/Audio), KHÔNG kèm các hướng dẫn quay dựng hay prompt hình ảnh.\n`;
         }
 
         currentFullPrompt = userPrompt; // Save for refining
