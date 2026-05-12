@@ -23,7 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const uspInput = document.getElementById('usp');
     const jargonInput = document.getElementById('jargon');
     const dnaInput = document.getElementById('brandDna');
+    const referenceMaterial = document.getElementById('referenceMaterial');
+    const winningContentSelect = document.getElementById('winningContentSelect');
     const generateVisualsCheckbox = document.getElementById('generateVisuals');
+
+    // Winning Content
+    const saveWinningBtn = document.getElementById('saveWinningBtn');
 
     // API Settings
     const settingsToggle = document.getElementById('settingsToggle');
@@ -85,6 +90,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function loadWinningContents() {
+        const wc = JSON.parse(localStorage.getItem('cw_winning_contents') || '[]');
+        winningContentSelect.innerHTML = '<option value="">-- Không sử dụng (Viết mới hoàn toàn) --</option>';
+        wc.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = item.title;
+            winningContentSelect.appendChild(opt);
+        });
+    }
+
+    saveWinningBtn.addEventListener('click', () => {
+        const text = markdownOutput.dataset.raw || markdownOutput.innerText;
+        if(!text) return alert("Chưa có bài viết nào để lưu!");
+        const title = prompt("Nhập tên gợi nhớ cho Mẫu này (VD: Mẫu Ads Tôm hùm chốt đơn 15/4):");
+        if(!title) return;
+
+        const wc = JSON.parse(localStorage.getItem('cw_winning_contents') || '[]');
+        wc.push({ id: Date.now().toString(), title: title, content: text });
+        localStorage.setItem('cw_winning_contents', JSON.stringify(wc));
+        loadWinningContents();
+        showToast('Đã lưu vào kho Mẫu Winning Content!');
+    });
+
     function populateBrandForm(brandData) {
         productInput.value = brandData.product || '';
         targetInput.value = brandData.target || '';
@@ -145,8 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize Multi-brand
+    // Initialize Multi-brand & Winning Contents
     loadBrands();
+    loadWinningContents();
 
     // --- 3. BADGE SUGGESTIONS ---
     document.querySelectorAll('.badge').forEach(badge => {
@@ -232,13 +262,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const angle = document.getElementById('angle').value;
         const length = document.getElementById('length').value;
         const generateVisuals = generateVisualsCheckbox.checked;
+        const refMaterial = referenceMaterial.value.trim();
         const extraNotes = document.getElementById('extraNotes').value.trim();
+        const selectedWcId = winningContentSelect.value;
 
         let userPrompt = `### THÔNG TIN BRAND:\n`;
         userPrompt += `- Sản phẩm/Dịch vụ: ${product}\n- Đối tượng KH: ${targetAudience}\n- USP: ${usp}\n`;
         if (brandDna) userPrompt += `- DNA Brand Voice (BẮT BUỘC): ${brandDna}\n`;
         if (jargon) userPrompt += `- THUẬT NGỮ BẮT BUỘC PHẢI DÙNG: ${jargon}. Hãy lồng ghép tự nhiên các thuật ngữ chuyên ngành này để thể hiện sự am hiểu thị trường.\n`;
         
+        if (refMaterial) {
+            userPrompt += `\n### TÀI LIỆU ĐẦU VÀO (Tham khảo/Fact-check):\n`;
+            userPrompt += `${refMaterial}\n`;
+            userPrompt += `(CHÚ Ý: Sử dụng các thông tin, số liệu từ tài liệu này làm nguyên liệu gốc, không tự bịa thông tin sai lệch).\n`;
+        }
+
+        if (selectedWcId) {
+            const wcList = JSON.parse(localStorage.getItem('cw_winning_contents') || '[]');
+            const wc = wcList.find(w => w.id === selectedWcId);
+            if (wc) {
+                userPrompt += `\n### KHUNG SƯỜN & NHỊP ĐIỆU CẦN MÔ PHỎNG (WINNING CONTENT):\n`;
+                userPrompt += `${wc.content}\n`;
+                userPrompt += `(BẮT BUỘC: Hãy phân tích nhịp điệu, cách đặt vấn đề, độ dài và cách chốt sale của bài viết mẫu trên, sau đó MÔ PHỎNG LẠI Y HỆT cấu trúc/phong cách đó cho sản phẩm mới này).\n`;
+            }
+        }
+
         userPrompt += `\n### YÊU CẦU JOB:\n`;
         userPrompt += `- Kênh đăng: ${channel}\n- Mục tiêu: ${goal}\n- Tone cơ bản: ${tone}\n`;
         userPrompt += `- Thời lượng yêu cầu: ${length}\n`;

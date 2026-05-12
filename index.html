@@ -87,6 +87,14 @@
                     <p>Nhập thông tin cho Brand hiện tại</p>
                 </div>
                 <form id="briefForm">
+                    <div class="form-group" style="background: rgba(234, 179, 8, 0.1); padding: 1rem; border-radius: 8px; border: 1px dashed #eab308; margin-bottom: 1.5rem;">
+                        <label for="winningContentSelect" style="color: #eab308;">🌟 Clone từ Mẫu Winning Content (Tùy chọn)</label>
+                        <select id="winningContentSelect">
+                            <option value="">-- Không sử dụng (Viết mới hoàn toàn) --</option>
+                        </select>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; margin-bottom: 0;">Ép AI viết theo đúng khung sườn và nhịp điệu của 1 bài đã ra đơn thành công.</p>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="product">Tên Sản phẩm / Dịch vụ *</label>
@@ -193,6 +201,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="referenceMaterial" style="color: #0ea5e9;">📑 Tài liệu Đầu vào / Báo cáo / Bài mẫu (Tùy chọn)</label>
+                        <textarea id="referenceMaterial" placeholder="Dán thông số kỹ thuật, báo cáo thị trường, landing page hoặc bài viết mẫu của đối thủ vào đây. AI sẽ dùng thông tin này làm nguyên liệu thực tế để xào nấu lại..." rows="3" style="border-color: #0ea5e9; background: rgba(14, 165, 233, 0.05);"></textarea>
+                    </div>
+
+                    <div class="form-group">
                         <label for="extraNotes">Yêu cầu cụ thể của Job này (Tùy chọn)</label>
                         <textarea id="extraNotes" placeholder="VD: Promo code giảm 20%, chèn CTA tải app ở cuối..." rows="2"></textarea>
                     </div>
@@ -209,6 +222,7 @@
                 <div class="card-header flex-header">
                     <h2>Kết Quả Content</h2>
                     <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-secondary" id="saveWinningBtn" style="border-color: #eab308; color: #eab308;" title="Lưu bài này làm mẫu cho các lần sau">🌟 Lưu Mẫu</button>
                         <button class="btn-secondary" id="copyBtn" title="Sao chép văn bản">📋 Copy</button>
                         <button class="btn-secondary" id="downloadBtn" title="Tải xuống file Markdown">📥 Tải file</button>
                     </div>
