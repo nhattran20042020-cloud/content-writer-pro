@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Writer Pro | Đa Ngành & Agency</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="flex-header">
+            <div class="logo">
+                <span class="icon">✨</span>
+                <h1>Content Writer Pro <span style="font-size: 1rem; background: linear-gradient(135deg, #a855f7, #6366f1); padding: 2px 8px; border-radius: 12px; color: white;">Agency Edition</span></h1>
+            </div>
+            <div>
+                <button id="historyBtn" class="btn-secondary" style="font-size: 0.9rem;">🕒 Lịch sử</button>
+            </div>
+        </header>
+        <p class="subtitle" style="text-align: center; margin-bottom: 2rem;">Hệ thống AI viết Content tự động - Tối ưu cho quy trình Multi-Client</p>
+
+        <main>
+            <!-- Cài đặt API Key -->
+            <div class="card settings-card">
+                <div class="card-header flex-header" id="settingsToggle" style="cursor: pointer;">
+                    <h2>⚙️ Cài đặt API (Bắt buộc)</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="settings-content" id="settingsContent" style="display: none;">
+                    <p style="margin-bottom: 1rem; color: #94a3b8; font-size: 0.9rem;">
+                        Khuyên dùng Gemini API. Bạn cần lấy key miễn phí từ Google AI Studio.
+                    </p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nhà cung cấp AI</label>
+                            <select id="apiProvider">
+                                <option value="gemini">Google Gemini</option>
+                                <option value="openai">OpenAI (ChatGPT)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="password" id="apiKey" placeholder="Nhập API Key vào đây..." style="flex: 1;">
+                                <button type="button" class="btn-secondary" id="fetchModelsBtn" style="white-space: nowrap;">Tải Model</button>
+                            </div>
+                        </div>
+                        <div class="form-group" id="modelSelectGroup" style="display: none; grid-column: span 2;">
+                            <label>Chọn Model (Chỉ hiển thị model API Key của bạn hỗ trợ)</label>
+                            <select id="geminiModel">
+                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" id="saveApiBtn">Lưu Cài Đặt</button>
+                </div>
+            </div>
+
+            <!-- Quản lý Đa Brand -->
+            <div class="card" style="border-color: #6366f1; background: rgba(99, 102, 241, 0.05);">
+                <div class="card-header flex-header" style="border-bottom: 1px solid rgba(99, 102, 241, 0.2);">
+                    <div>
+                        <h2 style="color: #6366f1;">📁 Danh Bạ Brand Khách Hàng</h2>
+                        <p style="color: #94a3b8; font-size: 0.85rem;">Chuyển đổi nhanh Profile cho từng khách hàng (Agency Use)</p>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label for="brandSelect">Chọn Brand Đang Làm Việc:</label>
+                        <select id="brandSelect">
+                            <option value="">-- Mới hoàn toàn (Tạo Trắng) --</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn-primary" id="saveBrandBtn" style="padding: 0.75rem 1rem; width: auto; font-size: 0.9rem;" title="Lưu thông tin bên dưới thành Brand mới hoặc cập nhật">💾 Lưu Brand Hiện Tại</button>
+                        <button type="button" class="btn-secondary" id="deleteBrandBtn" style="padding: 0.75rem 1rem; border-color: #ef4444; color: #ef4444; display: none;" title="Xóa Brand này">🗑️ Xóa</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Brief -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Tạo Brief Content</h2>
+                    <p>Nhập thông tin cho Brand hiện tại</p>
+                </div>
+                <form id="briefForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product">Tên Sản phẩm / Dịch vụ *</label>
+                            <input type="text" id="product" required placeholder="VD: Dự án BĐS ABC, Tôm hùm sống, Phần mềm CRM...">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetAudience">Đối tượng Khách hàng *</label>
+                            <input type="text" id="targetAudience" required placeholder="VD: Giới siêu giàu, Dân văn phòng 25-35 tuổi...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usp">USP (Điểm khác biệt độc nhất) *</label>
+                        <div class="suggestions" id="uspSuggestions">
+                            <span class="badge">Pháp lý minh bạch, sổ hồng sẵn</span>
+                            <span class="badge">Hoàn tiền 100% nếu không hiệu quả</span>
+                            <span class="badge">Tiết kiệm 50% thời gian</span>
+                            <span class="badge">Công nghệ độc quyền từ Mỹ</span>
+                        </div>
+                        <textarea id="usp" required placeholder="Nhập các điểm mạnh nhất của sản phẩm..." rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jargon" style="color: #38bdf8;">Thư Viện Thuật Ngữ (Bắt buộc AI dùng) 📚</label>
+                        <div class="suggestions" id="jargonSuggestions">
+                            <span class="badge">ROI, CVR, Phễu chuyển đổi</span>
+                            <span class="badge">Đòn bẩy tài chính, Dòng tiền</span>
+                            <span class="badge">Bảo chứng, Tính thanh khoản</span>
+                            <span class="badge">UI/UX, Điểm chạm khách hàng</span>
+                        </div>
+                        <textarea id="jargon" placeholder="Nhập các thuật ngữ chuyên ngành (ngăn cách bằng dấu phẩy) để content trông chuyên nghiệp nhất. VD: Dòng tiền âm, Lãi suất thả nổi..." rows="1" style="border-color: #38bdf8; background: rgba(56, 189, 248, 0.05);"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brandDna" style="color: #a855f7;">DNA Brand Voice (Đặc trưng thương hiệu) 💎</label>
+                        <textarea id="brandDna" placeholder="VD: Xưng Mình-Bạn, phong cách tinh tế sang trọng của tư vấn viên cấp cao, không dùng lóng..." rows="2" style="border-color: #a855f7; background: rgba(168, 85, 247, 0.05);"></textarea>
+                    </div>
+
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0;">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="channel">Kênh phân phối *</label>
+                            <select id="channel" required>
+                                <option value="TikTok Video (Kịch bản)">TikTok Video (Kịch bản)</option>
+                                <option value="YouTube Shorts">YouTube Shorts</option>
+                                <option value="YouTube Long Form">YouTube Video dài</option>
+                                <option value="Facebook Post">Facebook Bài đăng Dài</option>
+                                <option value="Facebook Ads">Facebook Ads Chạy Chuyển Đổi</option>
+                                <option value="Bài SEO Blog / Website">Bài SEO Blog / Website</option>
+                                <option value="Zalo OA / Kịch bản Telesale">Zalo OA / Kịch bản Telesale</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goal">Mục tiêu chiến dịch *</label>
+                            <select id="goal" required>
+                                <option value="Chốt đơn trực tiếp">Chốt đơn trực tiếp</option>
+                                <option value="Thu thập Lead (Điền Form)">Thu thập Lead (Điền Form)</option>
+                                <option value="Giáo dục Khách hàng (Educate)">Giáo dục Khách hàng (Educate)</option>
+                                <option value="Tương tác & Brand Awareness">Tương tác & Nhận diện (Viral)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tone">Tone giọng văn cơ bản *</label>
+                            <select id="tone" required>
+                                <option value="Chuyên gia phân tích">Chuyên gia phân tích (Tài chính, BĐS, B2B)</option>
+                                <option value="Bạn bè thân thiết">Bạn bè thân thiết (Bán lẻ, F&B, Thời trang)</option>
+                                <option value="Người kể chuyện">Người kể chuyện (Cảm xúc, Brand Story)</option>
+                                <option value="Thẳng thắn trực tiếp">Thẳng thắn trực tiếp (Ads chốt sale)</option>
+                                <option value="Hài hước thông minh">Hài hước thông minh (Trendy, Viral)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="angle">Góc tiếp cận</label>
+                            <select id="angle">
+                                <option value="Để AI tự đề xuất 3 góc">Tự động Brainstorm (Khuyên dùng)</option>
+                                <option value="Tập trung vào Nỗi đau (Pain)">Tập trung vào Nỗi đau (Pain)</option>
+                                <option value="Tập trung vào Khát vọng (Aspiration)">Khát vọng (Aspiration)</option>
+                                <option value="Góc Phản trực giác (Counter-intuitive)">Phản trực giác (Đi ngược đám đông)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="length">Thời lượng / Độ dài</label>
+                            <select id="length">
+                                <option value="Siêu ngắn (< 30s / Dưới 150 từ)">Siêu ngắn (< 30s / Dưới 150 từ)</option>
+                                <option value="Vừa phải (30s - 1 phút / 150-300 từ)" selected>Vừa phải (30s - 1 phút / 150-300 từ)</option>
+                                <option value="Dài phân tích (> 3 phút / > 800 từ)">Dài phân tích (> 3 phút / > 800 từ)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: center; padding-top: 1.5rem;">
+                            <label class="checkbox-container" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #10b981; font-weight: 600;">
+                                <input type="checkbox" id="generateVisuals" style="width: auto; height: 18px;">
+                                🎬 Sinh kèm Kịch bản Hình ảnh & Prompt Midjourney
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="extraNotes">Yêu cầu cụ thể của Job này (Tùy chọn)</label>
+                        <textarea id="extraNotes" placeholder="VD: Promo code giảm 20%, chèn CTA tải app ở cuối..." rows="2"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="generateBtn">
+                        <span class="btn-text">Tạo Content Đa Ngành</span>
+                        <span class="btn-icon">🔥</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Kết quả -->
+            <div class="card result-card hidden" id="resultCard">
+                <div class="card-header flex-header">
+                    <h2>Kết Quả Content</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-secondary" id="copyBtn" title="Sao chép văn bản">📋 Copy</button>
+                        <button class="btn-secondary" id="downloadBtn" title="Tải xuống file Markdown">📥 Tải file</button>
+                    </div>
+                </div>
+                
+                <div id="loadingState" class="hidden" style="text-align: center; padding: 2rem;">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem; color: #a855f7;">AI đang tính toán logic và thuật ngữ chuyên ngành... (Khoảng 10-20s)</p>
+                </div>
+
+                <div class="prompt-container" id="contentOutputWrapper">
+                    <div id="markdownOutput" class="markdown-body"></div>
+                </div>
+
+                <!-- Tính năng Tinh chỉnh lại -->
+                <div id="refineSection" class="hidden" style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                    <label style="color: #a855f7;">✨ Điều chỉnh lại bài viết này:</label>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="text" id="refineInput" placeholder="VD: Cắt ngắn lại 1 nửa, làm giọng văn gắt hơn chút..." style="flex: 1;">
+                        <button id="refineBtn" class="btn-secondary" style="border-color: #a855f7; color: #a855f7;">Sửa bài</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal Lịch sử -->
+    <div id="historyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header flex-header">
+                <h2>🕒 Lịch sử Agency Job</h2>
+                <button class="close-btn" id="closeHistoryBtn">&times;</button>
+            </div>
+            <div id="historyList" class="history-list">
+                <!-- Items go here -->
+            </div>
+            <button id="clearHistoryBtn" class="btn-secondary" style="margin-top: 1rem; width: 100%; border-color: #ef4444; color: #ef4444;">Xóa toàn bộ lịch sử</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Thông báo!</div>
+
+    <script src="skill-prompt.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
