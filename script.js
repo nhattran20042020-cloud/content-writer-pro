@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. LOAD API SETTINGS ---
     const savedProvider = localStorage.getItem('cw_api_provider') || 'gemini';
     const savedKey = localStorage.getItem('cw_api_key') || '';
-    const savedModel = localStorage.getItem('cw_gemini_model') || 'gemini-1.5-flash';
+    const savedModel = localStorage.getItem('cw_gemini_model') || 'gemini-1.5-flash-latest';
     
     apiProvider.value = savedProvider;
     apiKeyInput.value = savedKey;
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function executeGeneration(promptText, historyTitle) {
         const provider = localStorage.getItem('cw_api_provider') || 'gemini';
         const key = localStorage.getItem('cw_api_key') || '';
-        const selectedModel = localStorage.getItem('cw_gemini_model') || 'gemini-1.5-flash';
+        const selectedModel = localStorage.getItem('cw_gemini_model') || 'gemini-1.5-flash-latest';
 
         resultCard.classList.remove('hidden');
         loadingState.classList.remove('hidden');
